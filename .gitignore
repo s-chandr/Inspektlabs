@@ -1,2 +1,6 @@
 virt
 *.env
+__pycache__
+booking/__pycache__
+flight/__pycache__
+user/__pycache__
