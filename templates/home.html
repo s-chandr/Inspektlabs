@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flight Ticket Booking - Home</title>
+</head>
+<body>
+    <h1>Welcome to Flight Ticket Booking</h1>
+    <h2>All Flights</h2>
+    <ul id="flights-list">
+        <!-- The list of flights will be added dynamically here -->
+    </ul>
+
+    <!-- Add a button to trigger fetching and displaying the flights -->
+    <button id="fetch-flights-btn">Fetch Flights</button>
+
+    <script>
+        // Function to format the departure time
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.toDateString()} ${date.toLocaleTimeString()}`;
+        }
+
+        // Function to populate the flights list
+        function populateFlights(data) {
+            const flightsList = document.getElementById('flights-list');
+            data.forEach(flight => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Flight ${flight.flight_number} - Departure Time: ${formatDate(flight.departure_time)} - Seats: ${flight.seats}`;
+                const bookLink = document.createElement('a');
+                bookLink.href = `/book/${flight.flight_number}`;
+                bookLink.textContent = 'Book';
+                listItem.appendChild(bookLink);
+                flightsList.appendChild(listItem);
+            });
+        }
+
+        // Add event listener to fetch flights when button is clicked
+        document.getElementById('fetch-flights-btn').addEventListener('click', () =>    {
+            // Fetch flight data from the backend
+            fetch('http://127.0.0.1:8000/indigos/flight')
+                .then(response => response.json())
+                .then(data => {
+                    // Populate the flights list
+                    console.log(data);
+                    populateFlights(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching flight data:', error);
+                });
+        });
+
+        // Optionally, you can also fetch flights when the page loads
+         // window.addEventListener('DOMContentLoaded', () => {
+            //  fetchFlights();
+          // });
+    </script>
+</body>
+</html>
