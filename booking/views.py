@@ -17,7 +17,7 @@ class Register_Booking(Resource):
             user_id = request.args.get("user_id", None)
             if user_id is None:
                 return {"message": "user_id not found"}, 404
-            user_bookings = list(bookings_collection.find({"user_id": user_id}))
+            user_bookings = list(bookings_collection.find({"user_id": user_id },{"_id":0}))
             return make_response(jsonify({"data":user_bookings}), 200)
         except Exception as e:
             return make_response(
@@ -38,7 +38,7 @@ class Register_Booking(Resource):
                 return {"message": "user_id not found"}, 404
             parser = reqparse.RequestParser()
             parser.add_argument('flight_number', type=str, required=True, help='Flight number is required.')
-            parser.add_argument('seats', type=int, required=False, help='Seat Count is default 1')            
+            parser.add_argument('seats', type=int, required=False, help='Seat Count is default 1' , default=1)            
             args = parser.parse_args()
 
             # Check if the flight exists
@@ -48,8 +48,9 @@ class Register_Booking(Resource):
             print(flight['departure_time'])
             departure_time = dt.strptime(flight['departure_time'], "%Y-%m-%d %H:%M:%S")
             current_time = dt.now()
+            
             if (departure_time - current_time) < timedelta(hours=2):
-                return {"message": "Cannot book a ticket. Less than 2 hours remaining for departure."}, 409
+                return {"message": "Cannot book a ticket. Less than 2 hours remaining for flight's departure."}, 409
 
             # Check for availability (assuming default seat count is 60)
             if int(flight["seats"]) < int(args['seats']):
