@@ -40,4 +40,20 @@ class Register_Flight(Resource):
         flight['_id'] = inserted_id
         return jsonify(flight)
     
+    def delete(self):
+        flight_number = request.args.get("flight_number", None)
+        if flight_number is None:
+            return {"message": "Flight number not provided in query parameters"}, 400
+
+        # Check if the flight with the provided flight_number exists in the database
+        flight = flights_collection.find_one({"flight_number": flight_number}, {'_id': 0})
+        if flight:
+            # If the flight exists, delete it
+            delete_result = flights_collection.delete_one({"flight_number": flight_number})
+            if delete_result.deleted_count == 1:
+                return {"message": f"Flight with flight_number '{flight_number}' has been deleted"}, 200
+            else:
+                return {"message": "An error occurred while deleting the flight"}, 500
+        else:
+            return {"message": "Flight not found"}, 404
 api.add_resource(Register_Flight, '/flight')

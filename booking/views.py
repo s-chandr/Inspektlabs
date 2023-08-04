@@ -30,34 +30,41 @@ class Register_Booking(Resource):
                 500,
             )
         
-    #Booking before 2 hours from departure of flight is allowed in case there are seats vacant
+    
     def post(self):
         try:
             user_id = request.args.get("user_id", None)
             if user_id is None:
                 return {"message": "user_id not found"}, 404
-            parser = reqparse.RequestParser()
-            parser.add_argument('flight_number', type=str, required=True, help='Flight number is required.')
-            parser.add_argument('seats', type=int, required=False, help='Seat Count is default 1' , default=1)            
-            args = parser.parse_args()
-
+            flight_number = request.args.get("flight_number", None)
+            if flight_number is None:
+                return {"message": "flight_number not found"}, 404
+            seats = request.args.get("seats", 1)
+            
+            
             # Check if the flight exists
-            flight = flights_collection.find_one({"flight_number": args['flight_number']})
+            flight = flights_collection.find_one({"flight_number": flight_number})
             if not flight:
                 return {"message": "Flight not found"}, 404
             print(flight['departure_time'])
-            departure_time = dt.strptime(flight['departure_time'], "%Y-%m-%d %H:%M:%S")
-            current_time = dt.now()
             
-            if (departure_time - current_time) < timedelta(hours=2):
-                return {"message": "Cannot book a ticket. Less than 2 hours remaining for flight's departure."}, 409
+            
+            
+            
+            
+            #Booking before 2 hours from departure of flight is allowed in case there are seats vacant
+            #Uncomment below to add this feature
+            # departure_time = dt.strptime(flight['departure_time'], "%Y-%m-%d %H:%M:%S")
+            # current_time = dt.now()
+            # if (departure_time - current_time) < timedelta(hours=2):
+            #     return {"message": "Cannot book a ticket. Less than 2 hours remaining for flight's departure."}, 409
 
             # Check for availability (assuming default seat count is 60)
-            if int(flight["seats"]) < int(args['seats']):
+            if flight["seats"] < int(seats):
                 return {"message": f"Flight has {flight['seats']} seats vacant. Cannot make a booking."}, 409
 
             
-            result = book_seats( args["flight_number"] , args["seats"] )
+            result = book_seats( flight_number , int(seats) )
             if not result:
                 return make_response(
                 jsonify(
@@ -69,7 +76,7 @@ class Register_Booking(Resource):
             )
             booking = {
                 'user_id': user_id,
-                'flight_number': args['flight_number'],
+                'flight_number': flight_number,
                 'booking_time': dt.now()
             }
             result = bookings_collection.insert_one(booking)

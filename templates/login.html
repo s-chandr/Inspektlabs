@@ -21,7 +21,7 @@
             <i class="material-icons lock">lock</i> Login
         </div>
 
-        <form>
+        <form id="login-form" >
             <div class="input">
                 <div class="input-addon">
                     <i class="material-icons">face</i>
@@ -55,8 +55,51 @@
 
         <div class="register">
             Don't have an account yet?
-            <a href="http://localhost:3000/register.html"><button id="register-link">Register here</button></a>
+            <a href="http://localhost:8000/register.html"><button id="register-link">Register here</button></a>
         </div>
+        <script>
+            function login() {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                
+                const requestBody = {
+                    username: username,
+                    password: password
+                };
+        
+                // Make an AJAX request to the backend API
+                fetch("http://127.0.0.1:8000/indigos/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                })
+                .then(response => {
+                    
+                    if (!response.ok) {
+                        alert("Login failed");
+                        throw new Error("Network response was not ok");
+                    }
+                    response.json();
+                    // response.json()
+                } )
+                .then(data => {
+                    console.log("Second then");
+                    
+                    window.location.href = "http://localhost:8000/home.html";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    // Handle error scenarios here
+                });
+            }
+        
+            document.getElementById("login-form").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent the form from submitting traditionally
+                login(); // Call the login function when the form is submitted
+            });
+        </script>
     </div>
 </body>
 

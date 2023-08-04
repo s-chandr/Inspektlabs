@@ -79,7 +79,7 @@
 
                 // Create the request body JSON object
                 const requestBody = {
-                    "email": email,
+                    "username": email,
                     "password": password,
                     "role": role
                 };
@@ -97,7 +97,7 @@
                     // Registration successful
                     alert('Registration successful!'); // You can customize the success message
                     // Redirect to the home page after successful registration
-                    window.location.href = 'http://localhost:3000/home.html';
+                    window.location.href = 'http://localhost:8000/home.html';
                 })
                 .catch(error => {
                     console.error('Error during registration:', error);

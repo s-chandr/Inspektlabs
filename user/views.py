@@ -71,9 +71,16 @@ class Login(Resource):
     def post(self):
         try:
             data = request.json
-            user = users_collection.find_one({"username": data["username"]})
+            user = users_collection.find_one({"email": data["username"]})
             if user and bcrypt.checkpw(data["password"].encode(), user["password"]):
-                return {"message": "Login successful", "user_id": user["user_id"]}, 200
+                response = make_response(
+                    jsonify({"message": "Login successful", "user_id": user["user_id"]}), 200
+                )
+
+                #Not working 
+                # response.set_cookie("user_id", user["user_id"], expires=1000)  # Set the cookie to expire after 7 days
+                return response
+                # return {"message": "Login successful", "user_id": user["user_id"]}, 200
             else:
                 return {"message": "Invalid credentials"}, 401
         except Exception as e:
