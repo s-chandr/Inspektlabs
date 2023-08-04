@@ -20,12 +20,50 @@
             return `${date.toDateString()} ${date.toLocaleTimeString()}`;
         }
 
+        function createButton(className, text, clickHandler) {
+            const button = document.createElement('button');
+            button.className = className;
+            button.textContent = text;
+            button.addEventListener('click', clickHandler);
+            return button;
+        }
+    
+        // Function to handle the seat increment
+        function incrementSeat(event) {
+            const listItem = event.target.parentElement;
+            const seatSpan = listItem.querySelector('.seat-count');
+            let seatCount = parseInt(seatSpan.textContent);
+            seatCount++;
+            seatSpan.textContent = seatCount;
+        }
+    
+        // Function to handle the seat decrement
+        function decrementSeat(event) {
+            const listItem = event.target.parentElement;
+            const seatSpan = listItem.querySelector('.seat-count');
+            let seatCount = parseInt(seatSpan.textContent);
+            if (seatCount > 0) {
+                seatCount--;
+                seatSpan.textContent = seatCount;
+            }
+        }
         // Function to populate the flights list
         function populateFlights(data) {
             const flightsList = document.getElementById('flights-list');
             data.forEach(flight => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `Flight ${flight.flight_number} - Departure Time: ${formatDate(flight.departure_time)} - Seats: ${flight.seats}`;
+                listItem.textContent = `Flight ${flight.flight_number} - Departure Time: ${formatDate(flight.departure_time)} - Seats Available:${flight.seats} - Book : `;
+                const seatSpan = document.createElement('span');
+                seatSpan.className = 'seat-count';
+                seatSpan.textContent = 0;
+                listItem.appendChild(seatSpan);
+    
+                // Create plus and minus buttons for seat count
+                const plusButton = createButton('seat-button', '+', incrementSeat);
+                const minusButton = createButton('seat-button', '-', decrementSeat);
+                listItem.appendChild(plusButton);
+                listItem.appendChild(minusButton);
+    
                 const bookLink = document.createElement('a');
                 bookLink.href = `/book/${flight.flight_number}`;
                 bookLink.textContent = 'Book';

@@ -17,7 +17,6 @@ class Register_User(Resource):
     def post(self):
         try:
             data = request.json
-            data["role"] = "user"
             password = data["password"].encode()
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt(12))
             data["user_id"] = str(uuid.uuid4().hex)[:10] + str(round(time.time()))
