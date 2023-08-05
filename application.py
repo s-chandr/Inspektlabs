@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 
 app.config["MONGO_URI"] = os.environ.get("DATABASE_URL")
-app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY") # Change this!
 jwt = JWTManager(app)
 
 CORS(app, origins=["http://localhost:8000"])
