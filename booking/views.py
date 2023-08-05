@@ -9,7 +9,11 @@ Booking = Blueprint("booking", __name__)  # create Blueprint
 bookings_collection = mongo['bookings_collection']
 flights_collection = mongo['flights_collection']
 
-
+from flask_jwt_extended import (
+    get_jwt_identity,
+    jwt_required , 
+    get_jwt
+)
 
 class Register_Booking(Resource):
     def get(self):
@@ -30,10 +34,10 @@ class Register_Booking(Resource):
                 500,
             )
         
-    
+    @jwt_required(optional=False)
     def post(self):
         try:
-            user_id = request.args.get("user_id", None)
+            user_id =  get_jwt_identity()
             if user_id is None:
                 return {"message": "user_id not found"}, 404
             flight_number = request.args.get("flight_number", None)

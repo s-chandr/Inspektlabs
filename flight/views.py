@@ -4,10 +4,16 @@ from flask_restful import Resource , reqparse
 import uuid
 import time
 from datetime import datetime
-
+from flask_jwt_extended import (
+    
+    get_jwt_identity,
+    jwt_required,
+    
+)
 
 Flight = Blueprint("flight", __name__)  # create Blueprint
 flights_collection = mongo['flights_collection']
+users_collection = mongo['users_collection']
 
 
 
@@ -23,7 +29,15 @@ class Register_Flight(Resource):
             return make_response(jsonify(flight), 200)
         return {"message": "Flight not found"}, 404
     
+    @jwt_required(optional=False)
     def post(self):
+        
+        email = get_jwt_identity()
+        result = users_collection.find_one({"username": email , "role" : "admin"},{'_id': 0})
+
+        if result is None:
+            return {"message": "Unauthorized access"}, 400
+        
         parser = reqparse.RequestParser()
         parser.add_argument('admin_id', type=str, required=True, help='admin_id  is required.')
         parser.add_argument('departure_time', type=lambda x: datetime.strptime(x, "%Y-%m-%dT%H:%M:%S"), required=True, help='Flight departure time is required.')
@@ -40,6 +54,7 @@ class Register_Flight(Resource):
         flight['_id'] = inserted_id
         return jsonify(flight)
     
+    @jwt_required(optional=False)
     def delete(self):
         flight_number = request.args.get("flight_number", None)
         if flight_number is None:
