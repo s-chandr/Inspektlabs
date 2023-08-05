@@ -114,7 +114,7 @@
                 
                 bookButton.addEventListener('click', () =>    {
                     // Fetch flight data from the backend
-                    const queryString = `user_id=123&flight_number=${flight.flight_number}&seats=${seatSpan.textContent}`;
+                    const queryString = `email=123&flight_number=${flight.flight_number}&seats=${seatSpan.textContent}`;
                     
                     fetch(`http://127.0.0.1:8000/indigos/booking?${queryString}`, {
                         method: 'POST',
