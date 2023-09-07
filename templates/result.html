@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Upload Result</title>
+</head>
+<body>
+    <h1>Uploaded Image Name is : {{ file_name }}</h1>
+    <img src="{{ url_for('uploaded_file', filename=image_name) }}" alt="Uploaded Image">
+    <form action="/camera">
+        <button type="submit">Go Back to Camera</button>
+    </form>
+</body>
+</html>

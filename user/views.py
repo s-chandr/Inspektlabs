@@ -21,6 +21,8 @@ from flask_jwt_extended import (
 User = Blueprint("user", __name__)  # create Blueprint
 users_collection = mongo['users_collection']
 
+
+
 #Add user and get all user
 class Register_User(Resource):
     def get(self):

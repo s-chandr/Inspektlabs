@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Capture</title>
+</head>
+<body>
+    <h1>Camera Capture</h1>
+    <video id="video" width="100%" height="auto" autoplay></video>
+    <button id="capture-button">Capture Photo</button>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <button id="upload-button" style="display: none;">Upload Photo</button>
+    <img id="captured-image" style="display: none;" src="" alt="Captured Photo">
+    
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const capturedImage = document.getElementById('captured-image');
+        const captureButton = document.getElementById('capture-button');
+        const uploadButton = document.getElementById('upload-button');
+        
+        async function setupCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+            }
+        }
+        
+        setupCamera();
+        
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            capturedImage.src = canvas.toDataURL('image/jpeg');
+            capturedImage.style.display = 'block';
+            uploadButton.style.display = 'block';
+        });
+        
+        uploadButton.addEventListener('click', () => {
+            const imageBlob = dataURItoBlob(capturedImage.src);
+            const formData = new FormData();
+            formData.append('file', imageBlob, 'captured.jpg');
+            
+            fetch('/upload_captured', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Image uploaded:', data.image_name);
+                // You can update the UI or redirect to another page if needed.
+                window.location.href = '/result?image_name=' + data.image_name;
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+            });
+        });
+        
+        // Function to convert Data URI to Blob
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: 'image/jpeg' });
+        }
+    </script>
+</body>
+</html>
