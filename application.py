@@ -34,7 +34,7 @@ jwt = JWTManager(app)
 CORS(app, origins=["http://localhost:3000"])
 
 mongo_client = MongoClient(app.config["MONGO_URI"])
-mongo = mongo_client["BiPolar"]
+mongo = mongo_client["inspektlabs"]
 
 
 # Configure rate limiting
@@ -108,7 +108,7 @@ def get_token():
             password = data["password"].encode()
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt(12))
             data["password"] = hashed_password
-            users_collection.insert_one(data)
+            mongo.users_collection.insert_one(data)
 
             #These tokens are to be handled by the front ent to be sent as cookies for protected routues
             access_token = create_access_token(
