@@ -65,7 +65,7 @@
 
         <div class="register">
             Do you already have an account?
-            <a href="http://localhost:3000/login.html"><button id="register-link">Log In here</button></a>
+            <a href="http://localhost:8000/login.html"><button id="register-link">Log In here</button></a>
         </div>
         <script>
             // Function to handle the form submission
@@ -79,13 +79,13 @@
 
                 // Create the request body JSON object
                 const requestBody = {
-                    "username": email,
+                    "email": email,
                     "password": password,
                     "role": role
                 };
 
                 // Make the AJAX POST request to register the user
-                fetch('http://127.0.0.1:8000/api/users', {
+                fetch('http://localhost:8000/api/users', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -97,7 +97,9 @@
                     // Registration successful
                     alert('Registration successful!'); // You can customize the success message
                     // Redirect to the home page after successful registration
-                    window.location.href = 'http://localhost:8000/home.html';
+                    console.log(data);
+                    localStorage.setItem('userData', JSON.stringify(data));
+                    window.location.href = 'http://localhost:8000/camera';
                 })
                 .catch(error => {
                     console.error('Error during registration:', error);

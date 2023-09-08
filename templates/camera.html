@@ -39,20 +39,35 @@
             uploadButton.style.display = 'block';
         });
         
+
         uploadButton.addEventListener('click', () => {
+            const userData = localStorage.getItem('userData');
+            console.log(userData);
+            const data = JSON.parse(userData);
+            console.log(data.data.access_token);
             const imageBlob = dataURItoBlob(capturedImage.src);
             const formData = new FormData();
             formData.append('file', imageBlob, 'captured.jpg');
             
-            fetch('/upload_captured', {
+            fetch('http://localhost:8000/upload_captured', {
                 method: 'POST',
+                headers: {
+                    // You don't need to set 'Content-Type' for FormData
+                    'Authorization': `Bearer ${data.access_token}`
+                },
                 body: formData,
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Image uploaded:', data.image_name);
-                // You can update the UI or redirect to another page if needed.
-                window.location.href = '/result?image_name=' + data.image_name;
+                console.log('Server response:', data);
+                if(data.message==='Your access token is invalid') {
+                    alert('Your access token is invalid');
+                }
+                else{
+                    console.log('Image uploaded:', data.image_name);
+                    // You can update the UI or redirect to another page if needed.
+                    // window.location.href = 'http://localhost:8000/result?image_name=' + data.image_name;
+                }
             })
             .catch(error => {
                 console.error('Error uploading image:', error);
