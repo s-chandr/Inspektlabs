@@ -38,7 +38,7 @@ mongo = mongo_client["inspektlabs"]
 
 
 # Configure rate limiting
-limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
+limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
 
 # Ensure the upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
