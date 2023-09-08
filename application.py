@@ -51,7 +51,7 @@ def index():
 
 
 @app.route('/upload', methods=['POST'])
-@jwt_required(optional=False)
+# @jwt_required(optional=False)
 @limiter.limit("5 per minute")  # Rate limiting applied to this route
 def upload():
     # Check if a file was uploaded
@@ -191,7 +191,7 @@ def login():
         )
 
 @app.route('/api/logout')
-@jwt_required(optional=False)
+# @jwt_required(optional=False)
 def logout():
     try:
         jti = get_jwt()['jti']
@@ -237,7 +237,7 @@ def camera():
     return render_template('camera.html')
 
 @app.route('/upload_captured', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 @limiter.limit("5 per minute")
 def upload_captured():
     file = request.files['file']

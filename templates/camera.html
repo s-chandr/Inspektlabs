@@ -42,19 +42,25 @@
 
         uploadButton.addEventListener('click', () => {
             const userData = localStorage.getItem('userData');
-            console.log(userData);
-            const data = JSON.parse(userData);
-            console.log(data.data.access_token);
+            if (userData) {
+                const data = JSON.parse(userData);
+                console.log(data.data.access_token);
+            
+                // Rest of your code for using the access token
+            } else {
+                console.error('userData not found in localStorage. Handle this case.');
+                // You can redirect to the login page or handle it as needed.
+            }
             const imageBlob = dataURItoBlob(capturedImage.src);
             const formData = new FormData();
             formData.append('file', imageBlob, 'captured.jpg');
             
             fetch('http://localhost:8000/upload_captured', {
                 method: 'POST',
-                headers: {
+                // headers: {
                     // You don't need to set 'Content-Type' for FormData
-                    'Authorization': `Bearer ${data.access_token}`
-                },
+                  // 'Authorization': `Bearer ${data.access_token}`
+                //},
                 body: formData,
             })
             .then(response => response.json())
@@ -66,7 +72,7 @@
                 else{
                     console.log('Image uploaded:', data.image_name);
                     // You can update the UI or redirect to another page if needed.
-                    // window.location.href = 'http://localhost:8000/result?image_name=' + data.image_name;
+                     window.location.href = 'http://localhost:8000/result?image_name=' + data.image_name;
                 }
             })
             .catch(error => {
